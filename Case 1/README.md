@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Case 1 - EDA: Perfil e Comportamento de Clientes
+=======
+# Case 1 — EDA: Perfil e Comportamento de Clientes
+>>>>>>> ed17197a368845d5e34b5ad0c35a85745b82e1af
 
 Análise exploratória de dados (EDA) sobre uma base de 2.000 clientes, cobrindo perfil demográfico, poder aquisitivo, padrões de consumo e segmentação. Este é o primeiro case do treinamento de Data Science.
 
@@ -25,13 +29,18 @@ Case 1/
 | `frequencia_compra` | decimal | compras por mês, em média (1,0 a 19,6) |
 | `ticket_medio` | decimal | valor médio por compra em R$ (44,22 a 3.285,62) |
 | `tempo_cliente_anos` | decimal | tempo de relacionamento em anos (0,1 a 18,0) |
+<<<<<<< HEAD
 | `score_engajamento` | decimal | score de engajamento (-13,4 a 80,2) |
+=======
+| `score_engajamento` | decimal | score de engajamento (-13,4 a 80,2 — ver *Pontos de atenção*) |
+>>>>>>> ed17197a368845d5e34b5ad0c35a85745b82e1af
 | `canal` | categórica | canal de aquisição: Aplicativo, Site, Loja física, Marketplace |
 | `regiao` | categórica | região do cliente: Sudeste, Nordeste, Sul, Centro-Oeste, Norte |
 | `plano` | categórica | plano contratado: Básico, Premium, VIP |
 | `data_cadastro` | data | data de cadastro do cliente (jan/2022 a jul/2026) |
 | `segmento_latente` | categórica | segmento pré-atribuído: Jovem Digital, Tradicional, Alto Valor |
 
+<<<<<<< HEAD
 ## Pontos de atenção
 
 - **`score_engajamento` negativo**: 4 clientes (0,2% da base) têm score negativo, mínimo de -13,4. Todos pertencem ao segmento Tradicional. O volume é irrelevante para as conclusões da análise e os registros foram mantidos sem tratamento, mas fica registrado aqui para visibilidade caso a base cresça ou o score negativo passe a ser mais frequente.
@@ -40,6 +49,11 @@ Case 1/
 
 
 Bibliotecas usadas: `pandas`, `matplotlib`, `seaborn`, `scipy`, `scikit-learn` (`StandardScaler`, `PCA`, `KMeans`, `adjusted_rand_score`).
+=======
+## Como rodar
+
+Bibliotecas usadas: `pandas`, `matplotlib`, `seaborn`, `scipy`, `scikit-learn` (`StandardScaler`, `PCA`, `TSNE`, `KMeans`, `adjusted_rand_score`).
+>>>>>>> ed17197a368845d5e34b5ad0c35a85745b82e1af
 
 ```bash
 pip install pandas matplotlib seaborn scipy scikit-learn jupyter
@@ -50,6 +64,7 @@ jupyter notebook EDA.ipynb
 
 O `EDA.ipynb` segue seis perguntas de negócio, complementadas por explorações adicionais:
 
+<<<<<<< HEAD
 1. **Qual é o perfil de idade dos clientes?** distribuição, boxplots por plano e por segmento.
 2. **Existem rendas extremamente altas?** distribuição, outliers pelo critério do IQR, ranking dos maiores valores.
 3. **Renda e gasto parecem relacionados?** dispersão, reta de regressão, correlações de Pearson e Spearman.
@@ -65,12 +80,23 @@ Depois das seis perguntas, a seção **Explorações adicionais** cobre mais sei
 4. Engajamento por canal.
 5. Tempo de cliente x Engajamento, por plano.
 6. Clusterização (KMeans) e validação do `segmento_latente` via Adjusted Rand Index.
+=======
+1. **Qual é o perfil de idade dos clientes?** — distribuição, boxplots por plano e por segmento.
+2. **Existem rendas extremamente altas?** — distribuição, outliers pelo critério do IQR, ranking dos maiores valores.
+3. **Renda e gasto parecem relacionados?** — dispersão, reta de regressão, correlações de Pearson e Spearman.
+4. **Os planos possuem comportamentos diferentes?** — comparação de métricas entre planos, testes ANOVA e Kruskal-Wallis.
+5. **Quais variáveis parecem relacionadas?** — matriz de correlação (heatmap) e pairplot por plano.
+6. **Existe alguma estrutura visual escondida?** — PCA, t-SNE e clustering (KMeans) das variáveis numéricas.
+
+Depois das seis perguntas, a seção **Explorações adicionais** cobre distribuição por canal/região/segmento, evolução dos cadastros ao longo do tempo, e relações entre frequência de compra, ticket médio e engajamento.
+>>>>>>> ed17197a368845d5e34b5ad0c35a85745b82e1af
 
 ## Principais achados
 
 - **`segmento_latente` é a variável que organiza a base**, não `plano`. Idade, renda e estrutura de comportamento variam fortemente por segmento e quase nada por plano contratado.
 - **O segmento é recuperável só com os dados numéricos**: PCA + KMeans, sem usar o rótulo `segmento_latente`, reconstrói os três grupos com Adjusted Rand Index de 0,871.
 - **Nenhuma das 6 métricas testadas** (renda, gasto, ticket médio, frequência, engajamento, tempo de cliente) mostrou diferença estatisticamente significativa entre os planos Básico, Premium e VIP (ANOVA e Kruskal-Wallis, p > 0,3 em todas).
+<<<<<<< HEAD
 - **Alto Valor concentra as rendas extremas**: 143 outliers de renda (7,2% da base) são 100% desse segmento, mas representam só 31% dele, ou seja, a maior parte do segmento tem renda alta sem ser estatisticamente atípica.
 - **Renda e gasto são fortemente correlacionados** (Pearson 0,85), mas a correlação de Spearman bem mais baixa (0,39) indica que essa relação é puxada pelos clientes de renda mais alta.
 
@@ -82,3 +108,13 @@ Depois das seis perguntas, a seção **Explorações adicionais** cobre mais sei
 - Diferenciar estratégia de engajamento por idade: recorrência para clientes mais velhos, upsell por transação para os mais jovens.
 - Investigar a estagnação na aquisição de novos clientes (~25-51 cadastros/mês, sem tendência de crescimento).
 
+=======
+- **Alto Valor concentra as rendas extremas**: 143 outliers de renda (7,2% da base) são 100% desse segmento — mas representam só 31% dele, ou seja, a maior parte do segmento tem renda alta sem ser estatisticamente atípica.
+- **Renda e gasto são fortemente correlacionados** (Pearson 0,85), mas a correlação de Spearman bem mais baixa (0,39) indica que essa relação é puxada pelos clientes de renda mais alta.
+
+## Pontos de atenção
+
+- `score_engajamento` assume valores negativos (mínimo -13,4), o que não é intuitivo para uma métrica de engajamento. Vale confirmar com quem gera essa métrica se isso é esperado antes de usá-la em modelos ou relatórios.
+- A base é desbalanceada entre planos (53% Básico, 35,6% Premium, 11,4% VIP) e entre regiões (Norte e Centro-Oeste têm as menores amostras) — leituras segmentadas por esses grupos menores merecem cautela.
+- Os dados de 2026 cobrem só até julho (parcial) — não comparar diretamente com os anos fechados sem anualizar.
+>>>>>>> ed17197a368845d5e34b5ad0c35a85745b82e1af
