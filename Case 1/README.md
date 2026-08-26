@@ -65,7 +65,7 @@ Depois das seis perguntas, a seção **Explorações adicionais** cobre mais sei
 3. Frequência de compra x Ticket médio e Engajamento.
 4. Engajamento por canal.
 5. Tempo de cliente x Engajamento, por plano.
-6. Clusterização (KMeans) e validação do `segmento_latente` via Adjusted Rand Index.
+6. Clusterização (KMeans)
 
 ## Principais achados
 
