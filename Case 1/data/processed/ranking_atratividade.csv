@@ -1,0 +1,48 @@
+pais,mortalidade_infantil,renda,pib_per_capita,expectativa_vida,fertilidade_total,score_atratividade,prioridade_top10
+Haiti,208.0,1500,662,32.1,3.33,1.706,True
+Central African Republic,149.0,888,446,47.5,5.21,1.565,True
+Chad,150.0,1930,897,56.5,6.59,1.506,True
+Niger,123.0,814,348,58.8,7.49,1.427,True
+Mali,137.0,1870,708,59.5,6.55,1.367,True
+Angola,119.0,5900,3530,60.1,6.16,1.307,True
+Mozambique,101.0,918,419,54.5,5.56,1.2,True
+Nigeria,130.0,5150,2330,60.5,5.84,1.192,True
+Guinea,109.0,1190,648,58.0,5.34,1.155,True
+"Congo, Dem. Rep.",116.0,609,334,57.5,6.54,1.153,True
+Cote d'Ivoire,111.0,2690,1220,56.3,5.27,1.147,False
+Benin,111.0,1820,758,61.8,5.36,1.138,False
+Burkina Faso,116.0,1430,575,57.9,5.87,1.133,False
+Cameroon,108.0,2660,1310,57.3,5.11,1.108,False
+Zambia,83.1,3280,1460,52.0,5.4,1.084,False
+Malawi,90.5,1030,459,53.1,5.31,1.07,False
+Afghanistan,90.2,1610,553,56.2,5.82,1.001,False
+"Congo, Rep.",63.9,5190,2740,60.4,4.95,0.977,False
+Guinea-Bissau,114.0,1390,547,55.6,5.05,0.972,False
+Eritrea,55.2,1420,482,61.7,4.61,0.921,False
+Pakistan,92.1,4280,1040,65.3,3.85,0.92,False
+Tanzania,71.9,2090,702,59.3,5.43,0.914,False
+Sierra Leone,160.0,1220,399,55.0,5.2,0.913,False
+Uganda,81.0,1540,595,56.8,6.15,0.901,False
+Madagascar,62.2,1390,413,60.8,4.6,0.899,False
+Gambia,80.3,1660,562,65.5,5.71,0.887,False
+Mauritania,97.4,3320,1200,68.2,4.98,0.885,False
+Comoros,88.2,1410,769,65.9,4.75,0.879,False
+Togo,90.3,1210,488,58.7,4.87,0.849,False
+Burundi,93.6,764,231,57.7,6.26,0.801,False
+Senegal,66.8,2180,1000,64.0,5.06,0.782,False
+Ghana,74.7,3060,1310,62.2,4.27,0.777,False
+Kenya,62.2,2480,967,62.8,4.37,0.762,False
+Lesotho,99.7,2380,1170,46.5,3.3,0.718,False
+Sudan,76.7,3370,1480,66.3,4.88,0.705,False
+Equatorial Guinea,111.0,33700,17100,60.9,5.21,0.692,False
+Lao,78.9,3980,1140,63.8,3.15,0.68,False
+Yemen,56.3,4480,1310,67.5,4.67,0.636,False
+Gabon,63.7,15400,8750,62.9,4.08,0.628,False
+Liberia,89.3,700,327,60.8,5.02,0.576,False
+Timor-Leste,62.6,1850,3600,71.1,6.23,0.529,False
+Namibia,56.0,8460,5190,58.6,3.6,0.517,False
+Rwanda,63.6,1350,563,64.6,4.51,0.414,False
+Kiribati,62.7,1730,1490,60.7,3.84,0.349,False
+Botswana,52.5,13300,6350,57.1,2.88,0.307,False
+South Africa,53.7,12000,7280,54.3,2.59,0.296,False
+Iraq,36.9,12700,4500,67.2,4.56,0.253,False

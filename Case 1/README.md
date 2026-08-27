@@ -1,84 +1,97 @@
-# Case 1 - EDA: Perfil e Comportamento de Clientes
+# Projeto: Onde ajudar países emergentes?
 
-Análise exploratória de dados (EDA) sobre uma base de 2.000 clientes, cobrindo perfil demográfico, poder aquisitivo, padrões de consumo e segmentação. Este é o primeiro case do treinamento de Data Science.
+**Case:** um milionário quer usar seu dinheiro para ajudar países emergentes. Quais países
+escolher, e por quê?
 
-## Estrutura da pasta
+A resposta usa clusterização (K-Means) para agrupar 167 países por indicadores de saúde,
+economia e demografia, encontrar o grupo em situação mais crítica e, dentro dele, ranquear os
+países que precisam de atenção mais urgente. 
+
+## Estrutura do projeto
 
 ```
-Case 1/
-├── EDA.ipynb              # notebook principal da análise
+projeto-paises-emergentes/
+│
+├── notebooks/
+│   ├── 01_EDA.ipynb                     → exploração dos dados brutos
+│   ├── 02_Preprocessamento.ipynb        → padronização (z-score) das variáveis
+│   ├── 03_Selecao_de_Features.ipynb     → análise de multicolinearidade e escolha das features
+│   ├── 04_Clusterizacao.ipynb           → escolha de k, K-Means final, validação hierárquica
+│   ├── 05_Analise_dos_Clusters.ipynb    → perfil e nome de cada grupo, visualização com UMAP
+│   └── 06_Ranking_de_Atratividade.ipynb → score de prioridade dentro do grupo mais vulnerável
+│
 ├── data/
-│   └── dataset_2k.csv     # base de dados (2.000 clientes, 13 colunas)
-└── README.md              # este arquivo
+│   ├── raw/                             → dataset original
+│   │   ├── dataset_paises.csv
+│   │   └── dicionario_dataset_paises.csv
+│   └── processed/                       → gerado ao rodar os notebooks
+│
+├── src/
+│   ├── preprocessing.py                 → carga de dados e padronização
+│   ├── clustering.py                    → K-Means, hierárquico, score de prioridade
+│   └── visualization.py                 → gráficos usados nos notebooks
+│
+├── requirements.txt
+└── README.md
 ```
 
-## O dataset
-
-`data/dataset_2k.csv` tem 2.000 linhas e 13 colunas, sem valores nulos, duplicados ou `cliente_id` repetido.
-
-| Coluna | Tipo | Descrição |
-|---|---|---|
-| `cliente_id` | inteiro | identificador único do cliente |
-| `idade` | inteiro | idade em anos (18 a 73) |
-| `renda_mensal` | decimal | renda mensal em R$ (1.684,33 a 37.051,72) |
-| `gasto_mensal` | decimal | gasto mensal em R$ (184,23 a 7.954,77) |
-| `frequencia_compra` | decimal | compras por mês, em média (1,0 a 19,6) |
-| `ticket_medio` | decimal | valor médio por compra em R$ (44,22 a 3.285,62) |
-| `tempo_cliente_anos` | decimal | tempo de relacionamento em anos (0,1 a 18,0) |
-| `score_engajamento` | decimal | score de engajamento (-13,4 a 80,2; ver *Pontos de atenção*) |
-| `canal` | categórica | canal de aquisição: Aplicativo, Site, Loja física, Marketplace |
-| `regiao` | categórica | região do cliente: Sudeste, Nordeste, Sul, Centro-Oeste, Norte |
-| `plano` | categórica | plano contratado: Básico, Premium, VIP |
-| `data_cadastro` | data | data de cadastro do cliente (jan/2022 a jul/2026) |
-| `segmento_latente` | categórica | segmento pré-atribuído: Jovem Digital, Tradicional, Alto Valor |
-
-## Pontos de atenção
-
-- **`score_engajamento` negativo**: 4 clientes (0,2% da base) têm score negativo, mínimo de -13,4. Todos pertencem ao segmento Tradicional. O volume é irrelevante para as conclusões da análise e os registros foram mantidos sem tratamento, mas vale confirmar com quem gera essa métrica se valores negativos são esperados antes de usá-la em modelos ou relatórios.
-- A base é desbalanceada entre planos (53% Básico, 35,6% Premium, 11,4% VIP) e entre regiões (Norte e Centro-Oeste têm as menores amostras) — leituras segmentadas por esses grupos menores merecem cautela.
-- Os dados de 2026 cobrem só até julho (parcial) — não comparar diretamente com os anos fechados sem anualizar.
+Cada notebook lê o que o anterior salvou em `data/processed/`, por isso a ordem importa. 
 
 ## Como rodar
 
-Bibliotecas usadas: `pandas`, `matplotlib`, `seaborn`, `scipy`, `scikit-learn` (`StandardScaler`, `PCA`, `KMeans`, `adjusted_rand_score`).
+1. Instalar as dependências: `pip install -r requirements.txt`.
+2. Abrir os notebooks em ordem, a partir de `notebooks/01_EDA.ipynb`, e rodar todas as
+   células (`Restart Kernel and Run All`). Cada um assume que o(s) anterior(es) já rodaram,
+   porque depende dos arquivos que eles salvam em `data/processed/`.
 
-```bash
-pip install pandas matplotlib seaborn scipy scikit-learn jupyter
-jupyter notebook EDA.ipynb
-```
+### Dependências
 
-## Estrutura do notebook
+Listadas em `requirements.txt`: pandas, numpy, scikit-learn, matplotlib, scipy, joblib,
+umap-learn e plotly.
 
-O `EDA.ipynb` segue seis perguntas de negócio, complementadas por explorações adicionais:
+Testado com: pandas 3.0, numpy 2.4, scikit-learn 1.8, matplotlib 3.10, scipy 1.17, joblib 1.5,
+umap-learn 0.5, plotly 7.0.
 
-1. **Qual é o perfil de idade dos clientes?** distribuição, boxplots por plano e por segmento.
-2. **Existem rendas extremamente altas?** distribuição, outliers pelo critério do IQR, ranking dos maiores valores.
-3. **Renda e gasto parecem relacionados?** dispersão, reta de regressão, correlações de Pearson e Spearman.
-4. **Os planos possuem comportamentos diferentes?** comparação de métricas entre planos, testes ANOVA e Kruskal-Wallis.
-5. **Quais variáveis parecem relacionadas?** matriz de correlação (heatmap) das variáveis numéricas.
-6. **Existe alguma estrutura visual escondida?** PCA das variáveis numéricas, com dispersão em 2D colorida por `segmento_latente`.
+## O dado
 
-Depois das seis perguntas, a seção **Explorações adicionais** cobre mais seis tópicos:
+`data/raw/dataset_paises.csv` traz, para 167 países, os indicadores abaixo (descrição
+completa em `data/raw/dicionario_dataset_paises.csv`):
 
-1. Distribuição de clientes por canal, região e segmento latente.
-2. Evolução dos cadastros ao longo do tempo.
-3. Frequência de compra x Ticket médio e Engajamento.
-4. Engajamento por canal.
-5. Tempo de cliente x Engajamento, por plano.
-6. Clusterização (KMeans)
+| Coluna | O que é |
+|---|---|
+| `mortalidade_infantil` | Mortes de crianças menores de 5 anos por 1.000 nascidos vivos |
+| `exportacoes` | Exportações de bens e serviços, % do PIB |
+| `saude` | Gasto total com saúde, % do PIB |
+| `importacoes` | Importações de bens e serviços, % do PIB |
+| `renda` | Renda líquida por pessoa |
+| `inflacao` | Taxa anual de crescimento do PIB total |
+| `expectativa_vida` | Expectativa de vida ao nascer |
+| `fertilidade_total` | Número médio de filhos por mulher |
+| `pib_per_capita` | PIB total dividido pela população |
 
-## Principais achados
+## Conclusão
 
-- **`segmento_latente` é a variável que organiza a base**, não `plano`. Idade, renda e estrutura de comportamento variam fortemente por segmento e quase nada por plano contratado.
-- **O segmento é recuperável só com os dados numéricos**: PCA + KMeans, sem usar o rótulo `segmento_latente`, reconstrói os três grupos com Adjusted Rand Index de 0,871.
-- **Nenhuma das 6 métricas testadas** (renda, gasto, ticket médio, frequência, engajamento, tempo de cliente) mostrou diferença estatisticamente significativa entre os planos Básico, Premium e VIP (ANOVA e Kruskal-Wallis, p > 0,3 em todas).
-- **Alto Valor concentra as rendas extremas**: 143 outliers de renda (7,2% da base) são 100% desse segmento, mas representam só 31% dele, ou seja, a maior parte do segmento tem renda alta sem ser estatisticamente atípica.
-- **Renda e gasto são fortemente correlacionados** (Pearson 0,85), mas a correlação de Spearman bem mais baixa (0,39) indica que essa relação é puxada pelos clientes de renda mais alta.
+A análise dos 167 países revelou três grupos: 31 desenvolvidos, 89 em desenvolvimento e 47
+vulneráveis. O último grupo concentra os maiores problemas de saúde e renda, sendo o mais
+indicado para receber ajuda.
 
-## Recomendações de negócio
+Os 10 países prioritários são: Haiti, República Centro-Africana, Chade, Níger, Mali, Angola,
+Moçambique, Nigéria, Guiné e República Democrática do Congo. Haiti se destaca como o caso mais
+crítico, seguido por República Centro-Africana e Chade.
 
-- Repensar a lógica dos planos: nenhuma métrica muda entre Básico, Premium e VIP.
-- Segmentar por `segmento_latente`, não por plano contratado.
-- Criar um subcorte dentro de Alto Valor para os clientes com renda outlier (31% do segmento).
-- Diferenciar estratégia de engajamento por idade: recorrência para clientes mais velhos, upsell por transação para os mais jovens.
-- Investigar a estagnação na aquisição de novos clientes (~25-51 cadastros/mês, sem tendência de crescimento).
+A recomendação seria concentrar os recursos nesses países, principalmente em saúde básica,
+pré-natal, vacinação e combate à desnutrição infantil. Em Angola e Nigéria, porém, seria mais
+adequado investir diretamente em serviços de saúde e infraestrutura, já que possuem mais
+recursos financeiros, mas ainda apresentam indicadores de saúde muito ruins.
+
+## Limitações
+
+- Os dados são um retrato estático, não capturam conflitos, instabilidade política ou
+  eventos recentes.
+- Clusterização agrupa países parecidos, mas não explica causa: mostra onde a situação é mais
+  grave, não por que cada país chegou lá.
+- O score de prioridade é uma escolha razoável entre várias possíveis, outros pesos ou outras
+  variáveis podem mudar a ordem dentro do top 10, especialmente para países fronteiriços entre
+  clusters.
+- Por isso, a decisão final deveria combinar esses resultados com dados atualizados e
+  conhecimento local sobre cada país.

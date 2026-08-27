@@ -1,0 +1,11 @@
+Nome da Coluna,Descrição
+pais,Nome do país
+mortalidade_infantil,Mortes de crianças menores de 5 anos por 1.000 nascidos vivos
+exportacoes,"Exportações de bens e serviços, fornecidas como porcentagem (%) do PIB total"
+saude,Gastos totais com saúde como porcentagem (%) do PIB total
+importacoes,"Importações de bens e serviços, fornecidas como porcentagem (%) do PIB total"
+renda,Renda líquida por pessoa
+inflacao,Medida da taxa anual de crescimento do PIB total
+expectativa_vida,Média de anos que um recém-nascido viveria se os padrões atuais de mortalidade se mantivessem
+fertilidade_total,Número de filhos que nasceriam de cada mulher se as taxas atuais de fertilidade por idade se mantivessem
+pib_per_capita,"O PIB per capita, calculado como o PIB total dividido pela população total"
