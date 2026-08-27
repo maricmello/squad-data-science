@@ -1,4 +1,4 @@
-# Case 1 - EDA: Perfil e Comportamento de Clientes
+# Case 0 - EDA: Perfil e Comportamento de Clientes
 
 Análise exploratória de dados (EDA) sobre uma base de 2.000 clientes, cobrindo perfil demográfico, poder aquisitivo, padrões de consumo e segmentação. Este é o primeiro case do treinamento de Data Science.
 
