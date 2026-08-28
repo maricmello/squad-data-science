@@ -51,7 +51,7 @@ Cada notebook lê o que o anterior salvou em `data/processed/`, por isso a ordem
 ### Dependências
 
 Listadas em `requirements.txt`: pandas, numpy, scikit-learn, matplotlib, scipy, joblib e
-plotly. `nbformat` e `nbclient` só são usados pelo `run_all.py`, não pelos notebooks em si.
+plotly, nbformat e nbclient
 
 Testado com: pandas 3.0, numpy 2.4, scikit-learn 1.8, matplotlib 3.10, scipy 1.17, joblib 1.5,
 plotly 7.0.
