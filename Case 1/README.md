@@ -1,6 +1,6 @@
 # Projeto: Onde ajudar países emergentes?
 
-**Case:** um milionário quer usar seu dinheiro para ajudar países emergentes. Quais países
+**Case:** Um milionário quer usar seu dinheiro para ajudar países emergentes. Quais países
 escolher, e por quê?
 
 A resposta usa clusterização (K-Means) para agrupar 167 países por indicadores de saúde,
@@ -51,7 +51,7 @@ Cada notebook lê o que o anterior salvou em `data/processed/`, por isso a ordem
 ### Dependências
 
 Listadas em `requirements.txt`: pandas, numpy, scikit-learn, matplotlib, scipy, joblib e
-plotly, nbformat e nbclient
+plotly, nbformat e nbclient.
 
 Testado com: pandas 3.0, numpy 2.4, scikit-learn 1.8, matplotlib 3.10, scipy 1.17, joblib 1.5,
 plotly 7.0.
