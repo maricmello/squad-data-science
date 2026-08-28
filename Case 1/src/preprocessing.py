@@ -42,7 +42,7 @@ def padronizar(df, colunas):
     """
     Padroniza (média 0, desvio padrão 1) as colunas indicadas.
 
-    Retorna (X_escalado, scaler) — o scaler é retornado para poder ser
+    Retorna (X_escalado, scaler), o scaler é retornado para poder ser
     reaplicado depois (por exemplo, em dados novos) sem refazer o fit.
     """
     scaler = StandardScaler()

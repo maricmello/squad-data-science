@@ -17,7 +17,7 @@ RANDOM_STATE = 42
 def avaliar_faixa_de_k(X_escalado, k_range=range(2, 9)):
     """
     Roda K-Means para cada k em k_range e devolve um DataFrame com
-    inertia e silhouette score de cada um — a base para o método do
+    inertia e silhouette score de cada um, a base para o método do
     cotovelo e para a escolha do número de clusters.
     """
     linhas = []
@@ -47,7 +47,7 @@ def rodar_hierarquico(X_escalado, k, linkage="ward"):
 
 def comparar_clusterizacoes(labels_a, labels_b):
     """
-    Adjusted Rand Index entre duas partições — usado para validar se o
+    Adjusted Rand Index entre duas partições, usado para validar se o
     K-Means e a clusterização hierárquica concordam sobre os grupos.
     1.0 = concordância perfeita, 0.0 = concordância ao acaso.
     """
@@ -60,10 +60,10 @@ def score_de_atratividade(df, colunas_boas, colunas_ruins):
     mais o país precisa de atenção.
 
     `colunas_boas`: indicadores em que valor alto = país está melhor
-    (ex.: renda, pib_per_capita, expectativa_vida, saude) — entram com
+    (ex.: renda, pib_per_capita, expectativa_vida, saude), entram com
     sinal negativo no score.
     `colunas_ruins`: indicadores em que valor alto = país está pior
-    (ex.: mortalidade_infantil, fertilidade_total) — entram com sinal
+    (ex.: mortalidade_infantil, fertilidade_total) entram com sinal
     positivo no score.
 
     Todas as colunas são padronizadas (z-score) antes de somar, para

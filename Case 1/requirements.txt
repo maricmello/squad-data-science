@@ -4,5 +4,8 @@ scikit-learn>=1.8
 matplotlib>=3.10
 scipy>=1.17
 joblib>=1.5
-umap-learn>=0.5
 plotly>=7.0
+
+# usados só pelo run_all.py, para rodar todos os notebooks de uma vez
+nbformat>=5.10
+nbclient>=0.10

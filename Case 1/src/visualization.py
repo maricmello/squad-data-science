@@ -38,18 +38,10 @@ def plot_cotovelo_silhouette(metricas_df):
     return fig
 
 
-def plot_umap_clusters(coords, labels, nomes_cluster):
+def plot_pca_clusters(coords, labels, nomes_cluster, var_explicada):
     """
-    Gráfico de dispersão dos países numa projeção UMAP, colorido por cluster.
-
-    UMAP não tem um "% de variância explicada" como o PCA (ele não é uma
-    projeção linear), por isso não recebe esse parâmetro, o gráfico serve
-    só para ver a separação dos grupos com outro método, não para medir
-    quanto da informação original foi preservada.
-
-    coords: array (n, 2) do embedding UMAP.
-    labels: cluster de cada país (o mesmo cluster do K-Means, calculado
-    nas variáveis originais, o UMAP aqui é só visualização).
+    coords: array (n, 2) de componentes principais.
+    labels: cluster de cada país.
     nomes_cluster: dict {id_cluster: nome legível}.
     """
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -61,9 +53,9 @@ def plot_umap_clusters(coords, labels, nomes_cluster):
             color=CORES_CLUSTER.get(c, "#888888"),
             s=45, alpha=0.8, edgecolor="white", linewidth=0.5,
         )
-    ax.set_title("Países agrupados por nível de desenvolvimento\n(UMAP)")
-    ax.set_xlabel("UMAP 1")
-    ax.set_ylabel("UMAP 2")
+    ax.set_title(f"Países agrupados por nível de desenvolvimento\n(PCA, {var_explicada:.0%} da variância explicada)")
+    ax.set_xlabel("Componente 1")
+    ax.set_ylabel("Componente 2")
     ax.legend()
     plt.tight_layout()
     return fig

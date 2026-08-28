@@ -17,7 +17,7 @@ projeto-paises-emergentes/
 │   ├── 02_Preprocessamento.ipynb        → padronização (z-score) das variáveis
 │   ├── 03_Selecao_de_Features.ipynb     → análise de multicolinearidade e escolha das features
 │   ├── 04_Clusterizacao.ipynb           → escolha de k, K-Means final, validação hierárquica
-│   ├── 05_Analise_dos_Clusters.ipynb    → perfil e nome de cada grupo, visualização com UMAP
+│   ├── 05_Analise_dos_Clusters.ipynb    → perfil e nome de cada grupo, visualização com PCA
 │   └── 06_Ranking_de_Atratividade.ipynb → score de prioridade dentro do grupo mais vulnerável
 │
 ├── data/
@@ -32,6 +32,7 @@ projeto-paises-emergentes/
 │   └── visualization.py                 → gráficos usados nos notebooks
 │
 ├── requirements.txt
+├── run_all.py               → roda todos os notebooks em ordem, de uma vez
 └── README.md
 ```
 
@@ -40,17 +41,20 @@ Cada notebook lê o que o anterior salvou em `data/processed/`, por isso a ordem
 ## Como rodar
 
 1. Instalar as dependências: `pip install -r requirements.txt`.
-2. Abrir os notebooks em ordem, a partir de `notebooks/01_EDA.ipynb`, e rodar todas as
-   células (`Restart Kernel and Run All`). Cada um assume que o(s) anterior(es) já rodaram,
-   porque depende dos arquivos que eles salvam em `data/processed/`.
+2. Rodar os notebooks. Duas opções:
+   - Tudo de uma vez: `python run_all.py`, na raiz do projeto. Roda os seis notebooks em
+     ordem e salva os resultados de volta em cada um.
+   - Um por um: abrir em ordem, a partir de `notebooks/01_EDA.ipynb`, e rodar todas as
+     células (`Restart Kernel and Run All`). Cada um assume que o(s) anterior(es) já
+     rodaram, porque depende dos arquivos que eles salvam em `data/processed/`.
 
 ### Dependências
 
-Listadas em `requirements.txt`: pandas, numpy, scikit-learn, matplotlib, scipy, joblib,
-umap-learn e plotly.
+Listadas em `requirements.txt`: pandas, numpy, scikit-learn, matplotlib, scipy, joblib e
+plotly. `nbformat` e `nbclient` só são usados pelo `run_all.py`, não pelos notebooks em si.
 
 Testado com: pandas 3.0, numpy 2.4, scikit-learn 1.8, matplotlib 3.10, scipy 1.17, joblib 1.5,
-umap-learn 0.5, plotly 7.0.
+plotly 7.0.
 
 ## O dado
 
