@@ -1,0 +1,29 @@
+{
+  "modelo_final": "Ridge (tuned)",
+  "hiperparametros": {
+    "model__alpha": 10
+  },
+  "gerado_em": "2026-09-01T17:38:36.570106",
+  "python": "3.11.15",
+  "bibliotecas": {
+    "scikit-learn": "1.8.0",
+    "xgboost": "3.2.0",
+    "shap": "0.51.0",
+    "pandas": "3.0.2",
+    "numpy": "2.4.4"
+  },
+  "random_state": 42,
+  "n_linhas_treino": 1657,
+  "n_linhas_teste": 415,
+  "features": [
+    "idade",
+    "renda",
+    "tempo_cliente",
+    "frequencia",
+    "reclamacoes",
+    "engajamento",
+    "dias_sem_comprar",
+    "desconto",
+    "ticket"
+  ]
+}

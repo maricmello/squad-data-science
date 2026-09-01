@@ -1,0 +1,74 @@
+{
+  "modelo_final": "Ridge (tuned)",
+  "criterio_escolha": "menor RMSE médio de cross-validation no treino (não o RMSE de teste)",
+  "candidatos_tunados_rmse_cv": {
+    "Ridge (tuned)": 363.7269544330473,
+    "GradientBoosting (tuned)": 370.6597329961366
+  },
+  "metricas_teste": {
+    "MAE": 288.25673623715903,
+    "RMSE": 357.39597868379167,
+    "R2": 0.527596182310961,
+    "MAPE": 0.13092617225067082
+  },
+  "metricas_baseline": {
+    "MAE": 418.92365255951967,
+    "RMSE": 520.4544841877326,
+    "R2": -0.0017966725261557848,
+    "MAPE": 0.19805165726331037
+  },
+  "reducao_rmse_vs_baseline_pct": 31.3,
+  "mae_pct_do_gasto_medio": 12.2,
+  "breusch_pagan_pvalue": 0.7704100527829854,
+  "top_5_features_permutation": [
+    "renda",
+    "desconto",
+    "tempo_cliente",
+    "engajamento",
+    "frequencia"
+  ],
+  "linhas_idade_invalida_removidas": 39,
+  "linhas_tempo_cliente_invalido_removidas": 89,
+  "teste_significancia_candidatos_tunados": {
+    "comparacao": "Ridge (tuned) vs GradientBoosting (tuned)",
+    "rmse_teste_a": 357.39597868379167,
+    "rmse_teste_b": 346.59103429494485,
+    "diferenca_observada": 10.80494438884682,
+    "ic95_diferenca": [
+      -3.0827175977109627,
+      24.4476149862185
+    ],
+    "p_valor_aprox": 0.1252,
+    "diferenca_significativa_95": false
+  },
+  "metricas_por_faixa_renda": [
+    {
+      "faixa_renda": "(1474.738, 4201.634]",
+      "n": 104,
+      "MAE": 293.4225417048327,
+      "RMSE": 359.85776099302285,
+      "MAPE": 0.1423267159338759
+    },
+    {
+      "faixa_renda": "(4201.634, 5784.094]",
+      "n": 104,
+      "MAE": 275.05398936654194,
+      "RMSE": 350.65487874897485,
+      "MAPE": 0.13249825225654557
+    },
+    {
+      "faixa_renda": "(5784.094, 7606.146]",
+      "n": 103,
+      "MAE": 310.90763404847337,
+      "RMSE": 382.74550468589615,
+      "MAPE": 0.1427815669870293
+    },
+    {
+      "faixa_renda": "(7606.146, 23468.803]",
+      "n": 104,
+      "MAE": 273.8605769231274,
+      "RMSE": 334.8990518589134,
+      "MAPE": 0.10621214800538989
+    }
+  ]
+}
