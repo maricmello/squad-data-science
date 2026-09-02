@@ -23,10 +23,12 @@ clientes gastando abaixo do esperado para o seu perfil.
 ```
 CASE 3/
 ├── data/
-│   ├── raw/                  # dado bruto, como recebido (case_regression.csv)
+│   ├── raw/                  # dado bruto
 │   └── processed/            # artefatos gerados pelo pipeline (split, métricas, modelo)
 ├── notebooks/
-│   ├── 01_EDA.ipynb                                  # entender a target, EDA univariada de todas as features, e tratamento de idade implausível e tempo_cliente inconsistente (com teste de sensibilidade)
+│   ├── 01_EDA.ipynb                                  # entender a target, EDA univariada de todas as features, 
+                                                      #  tratamento de idade implausível 
+                                                      #  e tempo_cliente inconsistente (com teste de sensibilidade)
 │   ├── 02_Preprocessamento.ipynb                      # split treino/teste e baseline (métricas do baseline salvas em data/processed/baseline.json)
 │   ├── 03_Modelagem_e_Comparacao.ipynb                # comparar modelos, métricas (inclui MAPE), previsto x observado, experimento log1p(renda)
 │   ├── 04_Residuos_e_Cross_Validation.ipynb           # resíduos, estabilidade via CV, robustez por faixa de renda
@@ -62,12 +64,6 @@ jupyter lab notebooks/
 python src/run_all.py
 ```
 
-`run_all.py` regenera todos os artefatos de `data/processed/` e o modelo
-final em `models/modelo_final.joblib` (+ `models/model_card.json`), e
-imprime um resumo de métricas em JSON, útil para reprodutibilidade (ex.:
-rodar em CI) ou para conferir que o ambiente está configurado corretamente.
-Os dois caminhos (notebooks e `run_all.py`) chegam ao mesmo modelo final e
-às mesmas métricas.
 
 ## Resultado do modelo final
 
