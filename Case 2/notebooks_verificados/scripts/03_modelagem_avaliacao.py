@@ -64,6 +64,7 @@ from avaliacao import (
     top_features_por_classe,
     pr_auc_macro,
 )
+from modelagem import construir_modelos_candidatos, rodar_grade_comparativa
 
 warnings.filterwarnings('ignore')
 
@@ -108,87 +109,11 @@ for k, v in metricas_baseline.items():
 # Testamos os cinco modelos com as representações salvas no notebook anterior: PCA e UMAP, cada uma nas três dimensões que definimos (10, 20 e 30), e o TF-IDF, em alta dimensão (5000 palavras, sem nenhuma redução). Uma exceção fica de fora: o HistGradientBoosting não aceita entrada esparsa nesta versão do scikit-learn, então essa combinação específica é pulada.
 
 # %%
-modelos = {
-    'Logistic': LogisticRegression(
-        max_iter=2000,
-        random_state=42
-    ),
+modelos = construir_modelos_candidatos()
 
-    'Random Forest': RandomForestClassifier(
-        n_estimators=300,
-        random_state=42,
-        n_jobs=2
-    ),
-
-    'Extra Trees': ExtraTreesClassifier(
-        n_estimators=300,
-        random_state=42,
-        n_jobs=2
-    ),
-
-    'HistGradientBoosting': HistGradientBoostingClassifier(
-        random_state=42
-    ),
-
-    'XGBoost': XGBClassifier(
-        eval_metric='mlogloss',
-        random_state=42,
-        n_jobs=2
-    )
-}
-
-reducoes_disponiveis = {
-    'PCA': [10, 20, 30],
-    'UMAP': [10, 20, 30],
-    'TF-IDF': [5000]
-}
-
-resultados = []
-predicoes_cache = {}
-embeddings_cache = {}
-
-for reducao, dims in reducoes_disponiveis.items():
-
-    for dim in dims:
-
-        if reducao == 'TF-IDF':
-            X_tr = sp.load_npz('data/processed/embeddings_reducoes/tfidf_train.npz')
-            X_te = sp.load_npz('data/processed/embeddings_reducoes/tfidf_test.npz')
-        else:
-            dados = np.load(
-                f'data/processed/embeddings_reducoes/'
-                f'{reducao.lower()}_{dim}.npz'
-            )
-            X_tr = dados['X_train']
-            X_te = dados['X_test']
-
-        embeddings_cache[(reducao, dim)] = (X_tr, X_te)
-
-        for nome, modelo in modelos.items():
-
-            if reducao == 'TF-IDF' and nome == 'HistGradientBoosting':
-                print("[AVISO] HistGradientBoosting pulado para TF-IDF (não suporta entrada esparsa).")
-                continue
-
-            metricas, y_pred = avaliar_modelo(
-                nome,
-                modelo,
-                X_tr,
-                y_train,
-                X_te,
-                y_test
-            )
-
-            metricas.update({
-                'reducao': reducao,
-                'dim': dim
-            })
-
-            resultados.append(metricas)
-
-            predicoes_cache[
-                (reducao, dim, nome)
-            ] = y_pred
+resultados, predicoes_cache, embeddings_cache = rodar_grade_comparativa(
+    y_train, y_test, modelos=modelos
+)
 
 # %% [markdown]
 # ## Tabela comparativa

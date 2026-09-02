@@ -23,7 +23,8 @@ notebooks_verificados/
 ├── scripts/                                     <- código-fonte dos notebooks em formato jupytext (.py)
 ├── src/
 │   ├── preprocessing.py                         <- limpeza e alinhamento de dados (usado por todos os notebooks)
-│   └── avaliacao.py                             <- métricas, teste de significância, interpretabilidade
+│   ├── avaliacao.py                             <- métricas, teste de significância, interpretabilidade
+│   └── modelagem.py                             <- modelos candidatos e grade comparativa (notebook 03)
 ├── tests/                                       <- testes unitários para src/
 ├── 01_eda_preprocessamento.ipynb
 ├── 02_embeddings_reducao_dimensional.ipynb
@@ -59,7 +60,7 @@ rodar tudo sem depender de nenhuma outra pasta.
    - `03_modelagem_avaliacao.ipynb`: depende dos arquivos gerados pelo 02 e do split gerado pelo 01.
    - `04_modelo_final_conclusao.ipynb`: usa a configuração vencedora decidida no notebook 03
      (representação, dimensão e hiperparâmetros), já registrada no topo do notebook.
-4. Para conferir as funções de `src/`, rode `pytest tests/` de dentro desta pasta (15 testes).
+4. Para conferir as funções de `src/`, rode `pytest tests/` de dentro desta pasta (22 testes).
 
 `data/processed/` já vem preenchido nesta entrega, gerado pela execução real dos notebooks, não é
 obrigatório rodar tudo de novo só para inspecionar os resultados.
@@ -106,3 +107,54 @@ obrigatório rodar tudo de novo só para inspecionar os resultados.
   decidir com a área de negócio onde vale a pena automatizar.
 - **Um plano mínimo de monitoramento pós-deploy** é proposto no notebook 04, com indicadores para
   detectar deriva (drift) de vocabulário.
+
+## Conclusão
+
+**O modelo funciona?** Sim, com boa margem sobre o baseline. O F1-macro da Logistic Regression
+otimizada (0,949) e o ROC-AUC (0,991) ficaram bem acima do baseline de classe majoritária (F1-macro
+de apenas 0,138, ver notebook 03). A taxa de erro geral no teste ficou em 5,0% (280 de 5.561
+produtos).
+
+**Esse foi realmente o melhor modelo possível?** Dentro do que foi testado, sim, e agora com uma
+confirmação estatística: o teste de significância do notebook 03 (bootstrap pareado, 3.000
+reamostragens) mostrou que a vantagem da Logistic Regression sobre o XGBoost otimizado (+0,0113 de
+F1-macro, IC 95% [+0,0056, +0,0171], p ≈ 0,0007) é estatisticamente significativa, não apenas um
+número maior por sorte de amostragem.
+
+**Qual foi a melhor representação?** O TF-IDF, uma representação clássica de contagem de palavras
+ponderada, teve o melhor resultado geral, superando qualquer combinação de embedding de frase
+testada (PCA e UMAP sobre os embeddings pré-calculados). A seção 5 do notebook 04 confirma com
+dados que isso acontece porque as categorias têm vocabulário bastante característico: "book"/"author"
+para `Books`, "laptop"/"camera" para `Electronics`, "vacuum"/"kitchen" para `Household`,
+"women"/"cotton" para `Clothing_Accessories`.
+
+**Quais categorias são mais difíceis?** `Household` continua concentrando boa parte dos erros, tanto
+sendo confundida com as outras quanto recebendo previsões que deveriam ser de outras categorias. Faz
+sentido: é a categoria mais ampla e heterogênea do catálogo, o que aumenta a sobreposição de
+vocabulário com as demais.
+
+**Quais são as limitações deste trabalho, medidas em vez de apenas citadas?**
+
+- A validação cruzada do notebook 03 usa `Pipeline`, refazendo o fit da representação a cada fold.
+  Os números de estabilidade resultantes devem ser lidos como confiáveis, sem o vazamento técnico
+  que existiria se a representação fosse ajustada uma única vez no treino completo.
+- A checagem de duplicatas semânticas do notebook 01 mediu o risco residual de vazamento por
+  descrições quase idênticas (não exatas): **21,88% do conjunto de teste (1.217 de 5.561 linhas)
+  tem uma quase-duplicata no treino** (similaridade de cosseno sobre TF-IDF ≥ 0,9). Isso é uma
+  limitação real que deveria ser tratada antes de um deploy; a métrica de teste reportada aqui pode
+  estar levemente otimista por causa disso.
+- A checagem de sensibilidade do UMAP à semente (notebook 02) mostrou uma diferença de F1-macro de
+  0,0033 entre rodar com e sem semente fixa nesta base. A decisão de não fixar a semente parece
+  razoável, mas é uma confirmação empírica pontual (o UMAP é estocástico, então essa diferença varia
+  um pouco a cada reexecução), não uma garantia geral.
+- Uma representação de embedding monolíngue (por exemplo, via um modelo sentence-transformers
+  rodando localmente sobre o texto em inglês) não foi implementada nesta versão. O notebook 02
+  compara apenas os embeddings pré-calculados fornecidos (reduzidos por PCA/UMAP) contra o TF-IDF; a
+  comparação com um embedding gerado especificamente para este vocabulário segue como trabalho
+  futuro.
+- O Optuna otimizou hiperparâmetros dos dois finalistas, mas não dos outros três modelos testados na
+  comparação inicial (Random Forest, Extra Trees, HistGradientBoosting), que ficaram só com os
+  hiperparâmetros padrão.
+- A deduplicação continua sendo feita por igualdade exata na etapa de treino do modelo final (a
+  checagem semântica do notebook 01 é uma medição de risco, não uma remoção). Remover também as
+  quase-duplicatas identificadas seria o próximo passo natural antes de um deploy.

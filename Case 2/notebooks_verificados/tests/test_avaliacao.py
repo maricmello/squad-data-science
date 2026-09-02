@@ -9,7 +9,7 @@ from sklearn.dummy import DummyClassifier
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from v1.src.avaliacao import (
+from avaliacao import (
     avaliar_modelo,
     comparar_modelos_bootstrap,
     top_features_por_classe,
