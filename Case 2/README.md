@@ -61,8 +61,8 @@ notebooks_verificados/
 - Métricas: não depende apenas de accuracy; também considera F1, balanced accuracy, ROC-AUC e PR-AUC.
 - Baseline: o DummyClassifier é usado como referência mínima.
 - Optuna: os hiperparâmetros são otimizados apenas com dados de treino/validação.
-- Comparação dos finalistas: a diferença entre os dois melhores modelos é testada estatisticamente.
-- Escolha do modelo: TF-IDF + Logistic Regression teve o melhor resultado (F1-macro 0,948) e superou o XGBoost (0,938).
+- Comparação dos finalistas: os dois melhores modelos do ranking geral são otimizados com Optuna e a diferença entre eles é testada estatisticamente.
+- Escolha do modelo: TF-IDF + Logistic Regression teve o melhor resultado (F1-macro 0,948).
 - Interpretabilidade: os coeficientes da Logistic Regression permitem identificar as palavras mais importantes para cada categoria.
 
 
@@ -73,11 +73,14 @@ otimizada (0,948) e o ROC-AUC (0,991) ficaram bem acima do baseline de classe ma
 de apenas 0,138). A taxa de erro geral no teste ficou em 5,2% (288 de 5.561
 produtos).
 
-**Esse foi realmente o melhor modelo possível?** Dentro do que foi testado, sim, e agora com uma
-confirmação estatística: o teste de significância do notebook 03 (bootstrap pareado, 3.000
-reamostragens) mostrou que a vantagem da Logistic Regression sobre o XGBoost otimizado (+0,0075 de
-F1-macro, IC 95% [+0,0017, +0,0133], p ≈ 0,0120) é estatisticamente significativa, não apenas um
-número maior por sorte de amostragem.
+**Esse foi realmente o melhor modelo possível?** Dentro do que foi testado, sim. O notebook 03 testa
+isso com um bootstrap pareado (3.000 reamostragens) entre os dois melhores modelos do ranking geral,
+não um par fixo de XGBoost vs. Logistic Regression — o segundo colocado muda conforme a execução
+(nesta última rodada, por exemplo, foi Random Forest, não XGBoost). O número da última execução
+válida encontrou vantagem estatisticamente significativa da Logistic Regression (+0,0075 de F1-macro,
+IC 95% [+0,0017, +0,0133], p ≈ 0,0120) sobre o segundo colocado da época (XGBoost). Esse valor precisa
+ser conferido de novo após a correção mais recente do notebook 03, que mudou quem entra como segundo
+finalista.
 
 **Qual foi a melhor representação?** O TF-IDF, uma representação clássica de contagem de palavras
 ponderada, teve o melhor resultado geral, superando qualquer combinação de embedding de frase

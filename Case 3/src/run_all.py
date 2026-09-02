@@ -1,34 +1,3 @@
-"""
-Executa o pipeline completo do case (etapas 1-12) fora dos notebooks, do
-carregamento dos dados brutos até o modelo final tunado e o relatório de
-métricas. Útil para reprodutibilidade (ex.: rodar em CI) e para regenerar os
-artefatos em data/processed/ e models/ sem precisar abrir o Jupyter.
-
-Uso:
-    python src/run_all.py
-
-Decisões de design principais:
-1. `idade` implausível (< 18 anos) e `tempo_cliente` inconsistente com a
-   `idade` (cliente teria começado a comprar antes dos 18 anos) são removidos
-   em data_prep.clean_data por padrão, nessa ordem. As duas são decisões de
-   validade de dado, documentadas com teste de sensibilidade no notebook 01:
-   o efeito médio na métrica é neutro/levemente negativo para a idade, e uma
-   leve melhora de RMSE para o tempo_cliente, mas nos dois casos as linhas
-   removidas não são "casos difíceis" para o modelo (erro absoluto médio
-   menor que o da base), então a melhora não vem de tirar ruído do modelo.
-2. A escolha do modelo final ENTRE os dois candidatos já tunados (melhor
-   linear e melhor árvore/boosting) usa o RMSE médio de cross-validation
-   (calculado no treino, pelo próprio RandomizedSearchCV), não o RMSE do
-   conjunto de teste. O teste é usado só para reportar a métrica final do
-   modelo já escolhido.
-3. Um teste de significância (bootstrap pareado) compara os dois candidatos
-   tunados no teste, para deixar explícito se a diferença observada é ou
-   não maior que o ruído de amostragem.
-4. MAPE e métricas segmentadas por faixa de renda são reportadas no resumo
-   final, além de MAE/RMSE/R².
-5. Um "model card" com as versões das bibliotecas usadas é salvo junto ao
-   modelo, para reprodutibilidade futura do artefato serializado.
-"""
 import json
 import platform
 import sys
@@ -59,8 +28,7 @@ def main():
     processed_dir.mkdir(parents=True, exist_ok=True)
     models_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1-2. carregar + limpar (remove colunas de índice, idade implausível e
-    # tempo_cliente inconsistente com a idade, nessa ordem)
+ 
     df_raw = data_prep.load_raw_data()
     n_idade_invalida = int(data_prep.idade_invalida_mask(df_raw).sum())
 
@@ -72,27 +40,26 @@ def main():
     X, y = data_prep.get_feature_target(df)
     features = list(X.columns)
 
-    # 3. split
+
     X_train, X_test, y_train, y_test = data_prep.make_split(X, y)
     pd.concat([X_train, y_train], axis=1).to_csv(processed_dir / "train.csv", index=False)
     pd.concat([X_test, y_test], axis=1).to_csv(processed_dir / "test.csv", index=False)
 
-    # 4. baseline
+
     baseline = modeling.get_baseline()
     baseline.fit(X_train, y_train)
     baseline_metrics = evaluation.regression_metrics(y_test, baseline.predict(X_test))
 
-    # 5-6. comparar modelos
+
     models = modeling.get_models()
     results_df, preds_test = evaluation.evaluate_models(models, X_train, y_train, X_test, y_test)
     results_df.to_csv(processed_dir / "model_comparison.csv", index=False)
 
-    # 9. cross-validation (estabilidade) — usa só o treino, para o teste não
-    # influenciar a escolha de qual modelo será otimizado no passo 10
+
     cv_df, _ = evaluation.cross_validate_models(models, X_train, y_train)
     cv_df.to_csv(processed_dir / "cv_results.csv", index=False)
 
-    # 10. tuning do melhor modelo linear e do melhor modelo de árvore/boosting
+
     kf = KFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
     linear_names = [n for n in cv_df["modelo"] if n in ("Linear", "Ridge")]
     tree_names = [n for n in cv_df["modelo"] if n not in ("Linear", "Ridge")]
@@ -124,8 +91,6 @@ def main():
         f"{best_tree} (tuned)": (tree_model, tree_cv_rmse),
     }
 
-    # Seleção do modelo final pelo RMSE médio de CV (treino) — o teste é
-    # tocado só depois, para reportar a métrica do modelo já escolhido.
     final_name = min(candidates, key=lambda n: candidates[n][1])
     final_model = candidates[final_name][0]
     joblib.dump(final_model, models_dir / "modelo_final.joblib")
@@ -133,19 +98,15 @@ def main():
     with open(processed_dir / "modelo_final_nome.txt", "w") as f:
         f.write(final_name)
 
-    # Teste de significância (bootstrap pareado) entre os dois candidatos
-    # tunados, avaliado no teste — só para quantificar se a diferença é
-    # maior que o ruído amostral, não para decidir o modelo final.
     name_a, name_b = list(candidates.keys())
     pred_a = candidates[name_a][0].predict(X_test)
     pred_b = candidates[name_b][0].predict(X_test)
     boot = evaluation.bootstrap_compare_rmse(y_test, pred_a, pred_b)
 
-    # 11. interpretabilidade
     perm_df = interpretability.permutation_importance_df(final_model, X_test, y_test, features)
     perm_df.to_csv(processed_dir / "permutation_importance.csv", index=False)
 
-    # 12. resumo para negócio
+
     final_pred = final_model.predict(X_test)
     final_metrics = evaluation.regression_metrics(y_test, final_pred)
     resid = y_test.values - final_pred
@@ -180,8 +141,6 @@ def main():
     with open(processed_dir / "metrics_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    # Model card: versões usadas para gerar o artefato final, para
-    # reprodutibilidade futura do .joblib.
     model_card = {
         "modelo_final": final_name,
         "hiperparametros": linear_params if name_a == final_name else tree_params,

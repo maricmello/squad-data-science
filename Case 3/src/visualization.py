@@ -1,6 +1,4 @@
-"""
-Estilo e funções de plot reutilizadas nos notebooks — Case Final.
-"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns

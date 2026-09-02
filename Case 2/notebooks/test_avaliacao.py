@@ -38,7 +38,7 @@ def test_avaliar_modelo_retorna_metricas_esperadas():
 
 def test_bootstrap_modelo_identico_nao_e_significativo():
     X, y = _dados_sinteticos()
-    y_pred = y.copy()  # "modelo" perfeito == "modelo" perfeito
+    y_pred = y.copy()  
     resultado = comparar_modelos_bootstrap(y, y_pred, y_pred, n_boot=200, random_state=0)
     assert resultado['diferenca_observada'] == pytest.approx(0.0)
     assert resultado['significativo_5pct'] is False
@@ -48,7 +48,7 @@ def test_bootstrap_detecta_modelo_claramente_pior():
     rng = np.random.RandomState(0)
     y_true = rng.randint(0, 2, size=500)
     y_pred_bom = y_true.copy()
-    # perturba 45% das previsões do modelo "ruim" -> bem pior que o bom
+    
     idx_erro = rng.choice(len(y_true), size=int(0.45 * len(y_true)), replace=False)
     y_pred_ruim = y_true.copy()
     y_pred_ruim[idx_erro] = 1 - y_pred_ruim[idx_erro]

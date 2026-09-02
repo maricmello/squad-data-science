@@ -27,8 +27,7 @@ def test_construir_modelos_candidatos_tem_as_cinco_familias():
 
 
 def test_construir_modelos_candidatos_devolve_instancias_novas_a_cada_chamada():
-    # Se fosse um dict no nível do módulo, as duas chamadas
-    # compartilhariam os mesmos objetos (estado mutável entre usos).
+
     modelos_a = construir_modelos_candidatos()
     modelos_b = construir_modelos_candidatos()
     assert modelos_a['Logistic'] is not modelos_b['Logistic']
@@ -83,7 +82,6 @@ def test_rodar_grade_comparativa_uma_linha_por_combinacao(tmp_path):
         modelos=modelos,
     )
 
-    # 2 reduções x 1 dimensão cada x 1 modelo = 2 combinações
     assert len(resultados) == 2
     assert {(r['reducao'], r['dim']) for r in resultados} == {('PCA', 8), ('TF-IDF', 5000)}
     assert set(embeddings_cache.keys()) == {('PCA', 8), ('TF-IDF', 5000)}
@@ -113,10 +111,7 @@ def test_rodar_grade_comparativa_pula_histgradientboosting_no_tfidf(tmp_path, ca
 
 
 def test_rodar_grade_comparativa_usa_padroes_quando_nao_especificado(tmp_path):
-    # Sem passar `modelos`/`reducoes_disponiveis`, a função usa os padrões
-    # do módulo (5 modelos x todas as reduções/dimensões declaradas em
-    # REDUCOES_DISPONIVEIS) — aqui só checamos que os padrões são de fato
-    # aplicados, sem rodar a grade completa (lenta para um teste unitário).
+
     from modelagem import REDUCOES_DISPONIVEIS, construir_modelos_candidatos
     assert REDUCOES_DISPONIVEIS['TF-IDF'] == [5000]
     assert len(construir_modelos_candidatos()) == 5

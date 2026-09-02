@@ -17,11 +17,6 @@ RANDOM_STATE = 42
 
 
 def regression_metrics(y_true, y_pred) -> dict:
-    """MAE, RMSE, R² e MAPE.
-
-    MAE e RMSE sozinhos não dizem se o erro pesa mais, proporcionalmente,
-    para clientes de gasto baixo ou alto — por isso o MAPE é reportado
-    junto, já que a target varia de ~R$600 a ~R$4.400 (ver notebook 01)."""
     return {
         "MAE": mean_absolute_error(y_true, y_pred),
         "RMSE": mean_squared_error(y_true, y_pred) ** 0.5,
@@ -31,8 +26,6 @@ def regression_metrics(y_true, y_pred) -> dict:
 
 
 def evaluate_models(models: dict, X_train, y_train, X_test, y_test) -> tuple[pd.DataFrame, dict]:
-    """Treina cada modelo no treino e avalia no teste. Retorna a tabela de
-    métricas e um dict {nome: y_pred} para uso em gráficos posteriores."""
     rows, preds = [], {}
     for name, pipe in models.items():
         pipe.fit(X_train, y_train)
@@ -44,10 +37,7 @@ def evaluate_models(models: dict, X_train, y_train, X_test, y_test) -> tuple[pd.
 
 
 def cross_validate_models(models: dict, X, y, n_splits: int = 5, random_state: int = RANDOM_STATE):
-    """K-Fold CV para todos os modelos. Retorna:
-    - cv_df: média/desvio-padrão de MAE/RMSE/R² por modelo (estabilidade)
-    - cv_raw: dict {nome: resultado bruto do cross_validate}, com os valores
-      por fold, útil para gráficos de estabilidade (boxplot por fold)."""
+
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=random_state)
     scoring = ["neg_mean_absolute_error", "neg_root_mean_squared_error", "r2"]
 
@@ -69,17 +59,13 @@ def cross_validate_models(models: dict, X, y, n_splits: int = 5, random_state: i
 
 
 def breusch_pagan_test(residuals: np.ndarray, X_test: pd.DataFrame) -> dict:
-    """Teste formal de heterocedasticidade usando as features do teste como
-    exógenas. p-valor baixo = evidência de variância do erro não constante."""
+
     exog = sm.add_constant(X_test.values)
     lm_stat, lm_pvalue, f_stat, f_pvalue = sms.het_breuschpagan(residuals, exog)
     return {"lm_stat": lm_stat, "lm_pvalue": lm_pvalue, "f_stat": f_stat, "f_pvalue": f_pvalue}
 
 
 def segment_metrics(y_true, y_pred, segment: pd.Series, n_bins: int = 4, label: str = "segmento") -> pd.DataFrame:
-    """MAE/RMSE/MAPE por faixa (quartil) de uma variável de segmentação
-    (ex.: renda, idade). Usado na análise de robustez para checar se o erro
-    é uniforme entre grupos de negócio, e não só na média agregada."""
     y_true = pd.Series(np.asarray(y_true)).reset_index(drop=True)
     y_pred = pd.Series(np.asarray(y_pred)).reset_index(drop=True)
     seg = pd.Series(np.asarray(segment)).reset_index(drop=True)
@@ -99,14 +85,7 @@ def segment_metrics(y_true, y_pred, segment: pd.Series, n_bins: int = 4, label: 
 
 
 def bootstrap_compare_rmse(y_true, pred_a, pred_b, n_boot: int = 5000, random_state: int = RANDOM_STATE) -> dict:
-    """Compara o RMSE de dois modelos no MESMO conjunto de teste via
-    bootstrap pareado (reamostra os pares (y, pred_a, pred_b) juntos, não
-    cada vetor separadamente, preservando a estrutura pareada).
 
-    Retorna a diferença observada (RMSE_a - RMSE_b), um IC 95% via
-    percentil bootstrap para essa diferença, e um p-valor aproximado de
-    dois lados. Usado para não declarar um modelo "vencedor" quando a
-    diferença de RMSE no teste é da ordem do ruído de amostragem."""
     rng = np.random.default_rng(random_state)
     y_true = np.asarray(y_true)
     pred_a = np.asarray(pred_a)

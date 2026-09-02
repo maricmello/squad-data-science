@@ -17,13 +17,12 @@ RANDOM_STATE = 42
 
 
 def get_baseline() -> DummyRegressor:
-    """Baseline: sempre prever a média do treino."""
+
     return DummyRegressor(strategy="mean")
 
 
 def get_models() -> dict:
-    """Modelos candidatos, todos em Pipeline (padronização aplicada só onde
-    faz diferença — Linear/Ridge — para evitar vazamento entre folds)."""
+
     return {
         "Linear": Pipeline([
             ("scaler", StandardScaler()),
