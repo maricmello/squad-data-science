@@ -26,12 +26,12 @@ CASE 3/
 │   ├── raw/                  # dado bruto, como recebido (case_regression.csv)
 │   └── processed/            # artefatos gerados pelo pipeline (split, métricas, modelo)
 ├── notebooks/
-│   ├── 01_EDA.ipynb                                  # etapas 1-2: entender a target, EDA univariada de todas as features, e tratamento de idade implausível e tempo_cliente inconsistente (com teste de sensibilidade)
-│   ├── 02_Preprocessamento.ipynb                      # etapas 3-4: split treino/teste e baseline
-│   ├── 03_Modelagem_e_Comparacao.ipynb                # etapas 5-7: comparar modelos, métricas (inclui MAPE), previsto x observado, experimento log1p(renda)
-│   ├── 04_Residuos_e_Cross_Validation.ipynb           # etapas 8-9: resíduos, estabilidade via CV, robustez por faixa de renda
-│   ├── 05_Tuning_e_Modelo_Final.ipynb                 # etapa 10: tuning e escolha do modelo final por cross-validation, com teste de significância entre candidatos
-│   └── 06_Interpretabilidade_e_Validacao_Negocio.ipynb # etapas 11-12: feature importance/SHAP (casos de erro e de acerto) e validação de negócio
+│   ├── 01_EDA.ipynb                                  # entender a target, EDA univariada de todas as features, e tratamento de idade implausível e tempo_cliente inconsistente (com teste de sensibilidade)
+│   ├── 02_Preprocessamento.ipynb                      # split treino/teste e baseline (métricas do baseline salvas em data/processed/baseline.json)
+│   ├── 03_Modelagem_e_Comparacao.ipynb                # comparar modelos, métricas (inclui MAPE), previsto x observado, experimento log1p(renda)
+│   ├── 04_Residuos_e_Cross_Validation.ipynb           # resíduos, estabilidade via CV, robustez por faixa de renda
+│   ├── 05_Tuning_e_Modelo_Final.ipynb                 # tuning e escolha do modelo final por cross-validation, com teste de significância entre candidatos
+│   └── 06_Interpretabilidade_e_Validacao_Negocio.ipynb # feature importance/SHAP (casos de erro e de acerto) e validação de negócio
 ├── pdf/
 │   └── regression.pdf        # material teórico do treinamento
 ├── models/
@@ -49,9 +49,6 @@ CASE 3/
 └── requirements.txt
 ```
 
-Cada notebook lê os artefatos salvos pelo anterior em `data/processed/`
-(dataset limpo → split → comparação de modelos/CV → modelo final tunado),
-então a ordem de execução importa: **01 → 02 → 03 → 04 → 05 → 06**.
 
 ## Como rodar
 
@@ -97,9 +94,7 @@ Os dois caminhos (notebooks e `run_all.py`) chegam ao mesmo modelo final e
 - Principais direcionadores (convergem entre importância nativa, permutation
   e SHAP): `renda`, `desconto`, `tempo_cliente`, `engajamento`.
 
-Os gráficos completos de interpretabilidade (importância nativa, permutation
-importance e SHAP, incluindo casos de erro e de acerto típico) estão no
-notebook `06_Interpretabilidade_e_Validacao_Negocio.ipynb`.
+
 
 ### Leitura para o negócio
 
@@ -111,11 +106,11 @@ notebook `06_Interpretabilidade_e_Validacao_Negocio.ipynb`.
 
 ### Experimentos testados e não adotados
 
-- **`log1p(renda)`**: testado como transformação para os modelos lineares, dado que `renda` tem cauda direita longa. Piora o RMSE de forma consistente em 10 splits diferentes, não foi adotado. Ver notebook 03.
+
 - **Remoção de `idade` implausível**: o efeito médio no RMSE, testado em 10 splits, é neutro a levemente negativo, a remoção é mantida por validade do dado (idade abaixo de 18 anos é implausível para um cliente com histórico de compras), não por ganho de métrica. Ver notebook 01.
 - **Remoção de `tempo_cliente` inconsistente com a idade**: 89 linhas em que o cliente teria começado a comprar antes dos 18 anos (`tempo_cliente > idade - 18`). Diferente da idade, aqui o RMSE médio de teste melhora de forma mais consistente ao remover (370,1 para 362,1 em 10 splits), mas o erro absoluto médio dessas linhas é menor que o do restante da base, ou seja, não são casos difíceis para o modelo. A melhora de RMSE é um efeito colateral de mudar a composição da base, não o motivo da remoção: a decisão segue o mesmo critério de validade do dado usado para a idade. Ver notebook 01.
 
-### Limitações e cuidados antes de usar em produção
+### Limitações
 
 1. **Dados sem timestamp e sem dicionário oficial:** a suposição sobre o "momento da previsão" (e a definição exata de cada feature) precisa ser validada com o pipeline de dados real da empresa antes de qualquer uso em produção. Ver `DATA_DICTIONARY.md`.
 2. **`idade` implausível e `tempo_cliente` inconsistente:** 39 registros com idade < 18 anos e mais 89 registros em que `tempo_cliente` seria incompatível com a idade são removidos do treino/teste (ver notebook 01), mas a causa raiz (por que a fonte gera esses valores) não foi investigada, só o sintoma foi corrigido no dataset.
@@ -123,19 +118,3 @@ notebook `06_Interpretabilidade_e_Validacao_Negocio.ipynb`.
 4. **Generalização:** previsões para clientes com perfil muito diferente dos dados observados (ex.: renda muito acima do observado) devem ser tratadas com cautela.
 5. **Desempenho por segmento:** erro relativo um pouco maior para clientes de renda mais baixa (ver acima), relevante se o modelo for usado para decisões que afetem esse segmento de forma desproporcional.
 
-### Plano mínimo de monitoramento pós-deploy
-
-Se este modelo for para um piloto em produção, os seguintes indicadores deveriam ser acompanhados (nenhum deles está implementado neste repositório — é um plano, não uma funcionalidade entregue):
-
-- **Qualidade da previsão em produção:** MAE/RMSE/MAPE realizados numa janela móvel (ex.: mensal), comparados com os valores deste README como referência de baseline aceitável.
-- **Drift de dados de entrada:** distribuição de `renda` (a feature mais importante e com maior cauda) e das demais features comparada periodicamente com a distribuição de treino (ex.: teste de Kolmogorov-Smirnov ou PSI por feature).
-- **Taxa de extrapolação:** proporção de previsões feitas para clientes fora do range observado em treino (ex.: `renda` acima do máximo de treino) — sinaliza previsões pouco confiáveis.
-- **Idade implausível e tempo_cliente inconsistente na entrada:** se o pipeline de produção alimentar o modelo com dados brutos, checar continuamente a taxa de `idade < 18` e de `tempo_cliente > idade - 18`. Se alguma dessas taxas subir, é sinal de um problema na fonte de dados que precisa ser escalado, não só filtrado.
-- **Revalidação periódica da suposição temporal:** confirmar, com quem opera o pipeline de dados real, que a janela de cálculo das features continua anterior ao período de `gasto_mensal` sendo previsto.
-- **Cadência de retreino:** não definida neste projeto — recomenda-se definir um gatilho (ex.: queda de X% no RMSE realizado, ou N meses) antes do piloto.
-
-### Recomendação
-
-O modelo final **Ridge** (tunado via `RandomizedSearchCV`, escolhido pela evidência mais confiável disponível — CV no treino, não uma diferença de teste dentro do ruído) supera o baseline com folga, apresenta estabilidade entre os folds e não mostra padrões problemáticos nos resíduos. Está adequado para um **piloto controlado**, por exemplo, como apoio à priorização de clientes no CRM — com a vantagem adicional de ser mais simples e interpretável que a alternativa (Gradient Boosting) com desempenho estatisticamente equivalente.
-
-Ainda assim, não deve ser o único critério para decisões financeiras de alto impacto antes de: (1) validar a suposição temporal e as definições de variável com a fonte (`DATA_DICTIONARY.md`), (2) implementar o monitoramento mínimo descrito acima, e (3) uma validação adicional com o negócio sobre a diferença de erro entre segmentos de renda.

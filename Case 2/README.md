@@ -10,21 +10,21 @@ A partir da descrição textual de um produto, prever automaticamente sua catego
 ```text
 notebooks_verificados/
 ├── data/
-│   ├── raw/                                     <- dados originais, intocados
-│   │   ├── dataset_ecommerce.csv                    (texto + categoria)
-│   │   └── embeddings_texto.npy                     (embeddings do texto, já calculados)
+│   ├── raw/                                     <- dados originais
+│   │   ├── dataset_ecommerce.csv                   
+│   │   └── embeddings_texto.npy                     
 │   └── processed/
-│       ├── split.npz                            <- índices de treino/teste, gerados pelo notebook 01
-│       └── embeddings_reducoes/                 <- gerado pelo notebook 02 (representações já ajustadas)
+│       ├── split.npz                            <- índices de treino/teste
+│       └── embeddings_reducoes/                 
 │           ├── pca_10.npz, pca_20.npz, pca_30.npz
 │           ├── umap_10.npz, umap_20.npz, umap_30.npz, umap_10_seed42.npz
-│           └── tfidf_train.npz, tfidf_test.npz       (esparsos, salvos à parte)
-├── figs/                                        <- todas as figuras dos 4 notebooks, prefixadas por número
+│           └── tfidf_train.npz, tfidf_test.npz       
+├── figs/                                        
 ├── scripts/                                     <- código-fonte dos notebooks em formato jupytext (.py)
 ├── src/
-│   ├── preprocessing.py                         <- limpeza e alinhamento de dados (usado por todos os notebooks)
+│   ├── preprocessing.py                         <- limpeza e alinhamento de dados 
 │   ├── avaliacao.py                             <- métricas, teste de significância, interpretabilidade
-│   └── modelagem.py                             <- modelos candidatos e grade comparativa (notebook 03)
+│   └── modelagem.py                             <- modelos candidatos e grade comparativa 
 ├── tests/                                       <- testes unitários para src/
 ├── 01_eda_preprocessamento.ipynb
 ├── 02_embeddings_reducao_dimensional.ipynb
@@ -33,8 +33,6 @@ notebooks_verificados/
 └── README.md
 ```
 
-Esta pasta é autocontida, tem sua própria `data/` (`data/raw/` e `data/processed/`), então dá para
-rodar tudo sem depender de nenhuma outra pasta.
 
 ## O que cada notebook responde
 
@@ -62,8 +60,6 @@ rodar tudo sem depender de nenhuma outra pasta.
      (representação, dimensão e hiperparâmetros), já registrada no topo do notebook.
 4. Para conferir as funções de `src/`, rode `pytest tests/` de dentro desta pasta (22 testes).
 
-`data/processed/` já vem preenchido nesta entrega, gerado pela execução real dos notebooks, não é
-obrigatório rodar tudo de novo só para inspecionar os resultados.
 
 ## Decisões e boas práticas seguidas
 
@@ -97,7 +93,7 @@ obrigatório rodar tudo de novo só para inspecionar os resultados.
   conjunto de teste, notebook 03), em vez de comparar só os números de F1-macro.
 - **TF-IDF entra como representação de comparação, ao lado dos embeddings**: o notebook 03 mostra que
   TF-IDF + Logistic Regression teve o melhor F1-macro entre todas as combinações testadas, e a Logistic
-  Regression com TF-IDF venceu o XGBoost otimizado (F1-macro 0,949 contra 0,937), diferença confirmada
+  Regression com TF-IDF venceu o XGBoost otimizado (F1-macro 0,948 contra 0,938), diferença confirmada
   como estatisticamente significativa.
 - **O modelo vencedor é interpretado**, não só avaliado. Os coeficientes da Logistic Regression sobre
   o vocabulário do TF-IDF mostram quais palavras mais pesam a favor de cada categoria (notebooks 03 e
@@ -111,14 +107,14 @@ obrigatório rodar tudo de novo só para inspecionar os resultados.
 ## Conclusão
 
 **O modelo funciona?** Sim, com boa margem sobre o baseline. O F1-macro da Logistic Regression
-otimizada (0,949) e o ROC-AUC (0,991) ficaram bem acima do baseline de classe majoritária (F1-macro
-de apenas 0,138, ver notebook 03). A taxa de erro geral no teste ficou em 5,0% (280 de 5.561
+otimizada (0,948) e o ROC-AUC (0,991) ficaram bem acima do baseline de classe majoritária (F1-macro
+de apenas 0,138). A taxa de erro geral no teste ficou em 5,2% (288 de 5.561
 produtos).
 
 **Esse foi realmente o melhor modelo possível?** Dentro do que foi testado, sim, e agora com uma
 confirmação estatística: o teste de significância do notebook 03 (bootstrap pareado, 3.000
-reamostragens) mostrou que a vantagem da Logistic Regression sobre o XGBoost otimizado (+0,0113 de
-F1-macro, IC 95% [+0,0056, +0,0171], p ≈ 0,0007) é estatisticamente significativa, não apenas um
+reamostragens) mostrou que a vantagem da Logistic Regression sobre o XGBoost otimizado (+0,0075 de
+F1-macro, IC 95% [+0,0017, +0,0133], p ≈ 0,0120) é estatisticamente significativa, não apenas um
 número maior por sorte de amostragem.
 
 **Qual foi a melhor representação?** O TF-IDF, uma representação clássica de contagem de palavras
@@ -139,7 +135,7 @@ vocabulário com as demais.
   Os números de estabilidade resultantes devem ser lidos como confiáveis, sem o vazamento técnico
   que existiria se a representação fosse ajustada uma única vez no treino completo.
 - A checagem de duplicatas semânticas do notebook 01 mediu o risco residual de vazamento por
-  descrições quase idênticas (não exatas): **21,88% do conjunto de teste (1.217 de 5.561 linhas)
+  descrições quase idênticas (não exatas): **21,9% do conjunto de teste (1.218 de 5.561 linhas)
   tem uma quase-duplicata no treino** (similaridade de cosseno sobre TF-IDF ≥ 0,9). Isso é uma
   limitação real que deveria ser tratada antes de um deploy; a métrica de teste reportada aqui pode
   estar levemente otimista por causa disso.
@@ -158,3 +154,22 @@ vocabulário com as demais.
 - A deduplicação continua sendo feita por igualdade exata na etapa de treino do modelo final (a
   checagem semântica do notebook 01 é uma medição de risco, não uma remoção). Remover também as
   quase-duplicatas identificadas seria o próximo passo natural antes de um deploy.
+- **Reexecução do pipeline muda os números de forma pequena, mas real**: como o UMAP não fixa
+  semente e o Optuna reotimiza a cada rodada, os valores exatos (F1-macro, IC do teste de
+  significância, hiperparâmetros escolhidos) variam um pouco entre execuções. As conclusões
+  qualitativas (TF-IDF + Logistic vence, a diferença é significativa, Household concentra os erros)
+  se mantiveram estáveis nas reexecuções observadas, mas os números de 2 e 3 casas decimais não
+  devem ser tratados como fixos.
+- **Bug conhecido, não corrigido**: a célula de interpretação por palavra da seção 9 do notebook 03
+  (`Interpretabilidade do modelo vencedor`) ajusta um `TfidfVectorizer` novo só para extrair o
+  vocabulário, em vez de reaproveitar o vectorizer usado para treinar o modelo — o vocabulário desse
+  vectorizer novo pode ficar em ordem diferente do que o modelo foi treinado, produzindo palavras
+  sem relação com a categoria. A leitura confiável das palavras mais importantes por categoria é a do
+  notebook 04 (que treina vectorizer e modelo juntos, de forma consistente), não a do notebook 03.
+- **Hiperparâmetro do modelo final pode ficar desatualizado**: o notebook 04 usa um `CONFIG_FINAL`
+  com os hiperparâmetros da Logistic Regression **hardcoded** (copiados manualmente de uma execução
+  anterior do Optuna no notebook 03), em vez de carregar o resultado mais recente. Como o Optuna do
+  notebook 03 pode retornar um `C` ligeiramente diferente a cada reexecução, o notebook 04 pode
+  treinar o "modelo final" com um hiperparâmetro que não é mais o que o notebook 03 encontrou de
+  melhor na última rodada. O ideal seria o notebook 03 salvar `melhores_params_log` em disco e o
+  notebook 04 carregar esse arquivo, em vez de copiar o valor manualmente.
