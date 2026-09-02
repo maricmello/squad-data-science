@@ -10,7 +10,7 @@ Estimar o gasto mensal esperado por cliente para apoiar priorização de ações
 de CRM, dimensionamento de metas de receita por carteira e identificação de
 clientes gastando abaixo do esperado para o seu perfil.
 
-> **Suposição declarada (não confirmada com a fonte):** a base não traz
+> **Suposição declarada:** a base não traz
 > timestamp explícito. Assumimos que as features descrevem o estado do
 > cliente no momento em que a previsão seria feita, e que `gasto_mensal` é o
 > gasto do período corrente/seguinte. Esta é a suposição mais crítica do
