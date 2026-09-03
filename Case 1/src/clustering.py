@@ -55,20 +55,6 @@ def comparar_clusterizacoes(labels_a, labels_b):
 
 
 def score_de_atratividade(df, colunas_boas, colunas_ruins):
-    """
-    Calcula um score de prioridade/atratividade para ajuda: quanto maior,
-    mais o país precisa de atenção.
-
-    `colunas_boas`: indicadores em que valor alto = país está melhor
-    (ex.: renda, pib_per_capita, expectativa_vida, saude), entram com
-    sinal negativo no score.
-    `colunas_ruins`: indicadores em que valor alto = país está pior
-    (ex.: mortalidade_infantil, fertilidade_total) entram com sinal
-    positivo no score.
-
-    Todas as colunas são padronizadas (z-score) antes de somar, para
-    nenhuma pesar mais só por causa da escala.
-    """
     z = df.copy()
     termos = []
 

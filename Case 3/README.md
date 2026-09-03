@@ -10,13 +10,6 @@ Estimar o gasto mensal esperado por cliente para apoiar priorização de ações
 de CRM, dimensionamento de metas de receita por carteira e identificação de
 clientes gastando abaixo do esperado para o seu perfil.
 
-> **Suposição declarada:** a base não traz
-> timestamp explícito. Assumimos que as features descrevem o estado do
-> cliente no momento em que a previsão seria feita, e que `gasto_mensal` é o
-> gasto do período corrente/seguinte. Esta é a suposição mais crítica do
-> projeto — ver `DATA_DICTIONARY.md` para o detalhamento de cada variável e
-> exatamente o que precisa ser validado com quem gerou os dados antes de uso
-> em produção.
 
 ## Estrutura do projeto
 
@@ -77,8 +70,7 @@ python src/run_all.py
 - **Modelo final: Ridge** (`alpha=10`, tunado via `RandomizedSearchCV`, 5-fold CV).
   Escolhido entre os dois melhores candidatos (Ridge tunado e GradientBoosting
   tunado) pelo **RMSE médio de cross-validation no treino** (363,7 vs. 370,7).
-  O conjunto de teste é reservado só para reportar a métrica final do modelo
-  já escolhido, não para decidir entre candidatos.
+ 
 - Um teste de significância (bootstrap pareado, 5.000 reamostragens) mostra
   que a diferença de RMSE entre Ridge tunado e GradientBoosting tunado no
   teste (357,4 vs. 346,6) **não é estatisticamente significativa** (IC 95%

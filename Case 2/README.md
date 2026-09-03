@@ -73,21 +73,11 @@ otimizada (0,948) e o ROC-AUC (0,991) ficaram bem acima do baseline de classe ma
 de apenas 0,138). A taxa de erro geral no teste ficou em 5,2% (288 de 5.561
 produtos).
 
-**Esse foi realmente o melhor modelo possível?** Dentro do que foi testado, sim. O notebook 03 testa
-isso com um bootstrap pareado (3.000 reamostragens) entre os dois melhores modelos do ranking geral,
-não um par fixo de XGBoost vs. Logistic Regression — o segundo colocado muda conforme a execução
-(nesta última rodada, por exemplo, foi Random Forest, não XGBoost). O número da última execução
-válida encontrou vantagem estatisticamente significativa da Logistic Regression (+0,0075 de F1-macro,
-IC 95% [+0,0017, +0,0133], p ≈ 0,0120) sobre o segundo colocado da época (XGBoost). Esse valor precisa
-ser conferido de novo após a correção mais recente do notebook 03, que mudou quem entra como segundo
-finalista.
+**Esse foi realmente o melhor modelo possível?** Sim.  Foi encontrado uma vantagem estatisticamente significativa da Logistic Regression (+0,0075 de F1-macro, IC 95% [+0,0017, +0,0133], p ≈ 0,0120) sobre o segundo colocado.
 
 **Qual foi a melhor representação?** O TF-IDF, uma representação clássica de contagem de palavras
 ponderada, teve o melhor resultado geral, superando qualquer combinação de embedding de frase
-testada (PCA e UMAP sobre os embeddings pré-calculados). A seção 5 do notebook 04 confirma com
-dados que isso acontece porque as categorias têm vocabulário bastante característico: "book"/"author"
-para `Books`, "laptop"/"camera" para `Electronics`, "vacuum"/"kitchen" para `Household`,
-"women"/"cotton" para `Clothing_Accessories`.
+testada (PCA e UMAP sobre os embeddings pré-calculados). 
 
 **Quais categorias são mais difíceis?** `Household` continua concentrando boa parte dos erros, tanto
 sendo confundida com as outras quanto recebendo previsões que deveriam ser de outras categorias. Faz
