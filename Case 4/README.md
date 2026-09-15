@@ -16,7 +16,7 @@ case_series_temporais/
 │       ├── train.csv
 │       └── test.csv
 ├── src/
-│   └── case_utils.py   funções compartilhadas (dados, features, métricas, walk-forward)
+│   └── utils.py        funções compartilhadas (dados, features, métricas, walk-forward)
 ├── notebooks/
 │   ├── 01_analise_exploratoria.ipynb
 │   ├── 02_baseline_modelos_classicos.ipynb
@@ -48,8 +48,8 @@ gráficos e tabelas nos outputs, sem necessidade de rodar nada.
 - `data/raw/` é a fonte da verdade: nunca é sobrescrito por código, então a
   origem dos números pode sempre ser conferida.
 - `data/processed/` é totalmente derivado de `data/raw/` por uma única função
-  (`case_utils.clean_and_save`). Apagar a pasta inteira e rodar o notebook 01 de
-  novo reproduz exatamente o mesmo resultado.
+  (`utils.clean_and_save`). Apagar a pasta inteira e rodar o notebook 01 de novo
+  reproduz exatamente o mesmo resultado.
 - Os notebooks 02, 03 e 04 nunca leem `data/raw/` diretamente nem duplicam lógica
   de limpeza, o que evita que uma limpeza esquecida em um notebook gere resultados
   diferentes dos outros.

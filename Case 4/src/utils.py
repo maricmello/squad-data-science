@@ -18,6 +18,7 @@ PALETTE = {
     "ml_ridge": "#1D4E89",
     "ml_random_forest": "#118AB2",
     "ml_gradient_boosting": "#C9A227",
+    "prophet": "#E63946",
     "real": "#111111",
     "treino": "#2E5FA3",
 }
@@ -36,7 +37,9 @@ def clean_and_save(train_raw, test_raw, processed_dir="../data/processed"):
 
     train = train_raw.copy()
     train[RAW_COLS] = train[RAW_COLS].interpolate(limit_direction="both")
+    train["Volume"] = train["Volume"].round().astype("int64")
     test = test_raw.copy()
+    test["Volume"] = test["Volume"].astype("int64")
 
     train.to_csv(f"{processed_dir}/train.csv", index=False)
     test.to_csv(f"{processed_dir}/test.csv", index=False)
