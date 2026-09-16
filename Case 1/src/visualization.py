@@ -1,10 +1,4 @@
-"""
-Funções de gráfico usadas pelos notebooks.
 
-Centralizar aqui evita ficar repetindo configuração de matplotlib em
-cada notebook e deixa o código dos notebooks mais focado na leitura dos
-resultados do que na "plumbing" de plotar.
-"""
 
 import matplotlib.pyplot as plt
 
@@ -18,10 +12,7 @@ def configurar_estilo():
 
 
 def plot_cotovelo_silhouette(metricas_df):
-    """
-    metricas_df: DataFrame com colunas 'k', 'inertia', 'silhouette'
-    (o retorno de clustering.avaliar_faixa_de_k).
-    """
+
     fig, axes = plt.subplots(1, 2, figsize=(11, 4))
 
     axes[0].plot(metricas_df["k"], metricas_df["inertia"], marker="o", color="#2563eb")
@@ -39,11 +30,7 @@ def plot_cotovelo_silhouette(metricas_df):
 
 
 def plot_pca_clusters(coords, labels, nomes_cluster, var_explicada):
-    """
-    coords: array (n, 2) de componentes principais.
-    labels: cluster de cada país.
-    nomes_cluster: dict {id_cluster: nome legível}.
-    """
+
     fig, ax = plt.subplots(figsize=(8, 6))
     for c in sorted(set(labels)):
         mask = labels == c
@@ -62,7 +49,6 @@ def plot_pca_clusters(coords, labels, nomes_cluster, var_explicada):
 
 
 def plot_ranking_barras(nomes, valores, titulo, xlabel):
-    """Gráfico de barras horizontais para um top-N (ex.: ranking de países)."""
     fig, ax = plt.subplots(figsize=(9, 5))
     bars = ax.barh(nomes[::-1], valores[::-1], color="#dc2626")
     for bar, valor in zip(bars, valores[::-1]):

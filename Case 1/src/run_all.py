@@ -1,14 +1,3 @@
-"""
-Roda todos os notebooks do projeto em ordem, do 01 ao 06.
-
-Cada notebook depende do(s) anterior(es) já terem rodado, porque lê os
-arquivos que eles salvam em data/processed/. Este script executa cada um do
-zero (equivalente a "Restart Kernel and Run All") e salva os resultados de
-volta no próprio notebook.
-
-Uso:
-    python run_all.py
-"""
 
 import sys
 from pathlib import Path

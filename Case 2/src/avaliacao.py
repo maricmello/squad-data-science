@@ -1,24 +1,3 @@
-"""Funções de avaliação de modelos compartilhadas pelos notebooks do case.
-
-- `avaliar_modelo`: calcula o conjunto padrão de métricas (accuracy,
-  F1-macro, precision/recall macro, ROC-AUC) para um modelo treinado.
-- `comparar_modelos_bootstrap`: testa se a diferença de F1-macro entre
-  dois modelos, no mesmo conjunto de teste, é estatisticamente
-  significativa, via bootstrap pareado, em vez de comparar os dois
-  finalistas só olhando o número.
-- `top_features_por_classe`: interpretabilidade do modelo vencedor
-  (Logistic Regression sobre TF-IDF), extrai as palavras com maior
-  peso positivo por categoria.
-- `cobertura_por_confianca`: métrica de negócio, para uma lista de
-  thresholds de confiança, calcula que fração do catálogo poderia ser
-  autoclassificada (previsão com probabilidade acima do threshold) e
-  qual seria a accuracy só nesse subconjunto, deixando o restante para
-  revisão manual.
-- `pr_auc_macro`: complementa o ROC-AUC (que satura perto de 1 nesse
-  problema e comunica pouco) com PR-AUC por classe, mais sensível ao
-  desbalanceamento residual entre categorias.
-"""
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
@@ -32,12 +11,6 @@ from sklearn.metrics import (
 
 
 def avaliar_modelo(nome_modelo, modelo, X_tr, y_tr, X_te, y_te):
-    """Treina um modelo e retorna um dicionário com as principais métricas multiclasse.
-
-    Sempre reporta accuracy junto de balanced accuracy e precision/recall/F1
-    macro e weighted, nunca só accuracy, já que o problema é multiclasse
-    e as categorias não são perfeitamente balanceadas.
-    """
     modelo.fit(X_tr, y_tr)
     y_pred = modelo.predict(X_te)
     metricas = {
@@ -54,22 +27,6 @@ def avaliar_modelo(nome_modelo, modelo, X_tr, y_tr, X_te, y_te):
 
 def comparar_modelos_bootstrap(y_true, y_pred_a, y_pred_b, metrica='f1_macro',
                                 n_boot=2000, random_state=42):
-    """Testa, via bootstrap pareado, se a diferença de métrica entre dois
-    modelos no mesmo conjunto de teste é maior do que se esperaria por
-    acaso.
-
-    Ideia: reamostra os índices do conjunto de teste (com reposição) muitas
-    vezes; em cada reamostragem, recalcula a métrica dos dois modelos sobre
-    os MESMOS índices sorteados (por isso "pareado", controla pela
-    dificuldade específica de cada reamostragem) e guarda a diferença
-    (métrica_a - métrica_b). O p-valor de duas caudas é a fração de
-    reamostragens em que o sinal da diferença se inverte em relação ao
-    observado nos dados reais, ou seja, quão plausível é que a diferença
-    observada seja só ruído de amostragem.
-
-    Retorna um dicionário com a diferença observada, o intervalo de
-    confiança de 95% (percentil 2.5 / 97.5 das reamostragens) e o p-valor.
-    """
     rng = np.random.RandomState(random_state)
     y_true = np.asarray(y_true)
     y_pred_a = np.asarray(y_pred_a)
@@ -114,20 +71,7 @@ def comparar_modelos_bootstrap(y_true, y_pred_a, y_pred_b, metrica='f1_macro',
 
 
 def top_features_por_classe(modelo_logistico, vectorizer, classes, top_n=15):
-    """Interpretabilidade de uma Logistic Regression treinada sobre TF-IDF.
 
-    Extrai, para cada classe, as `top_n` palavras do vocabulário com maior
-    coeficiente positivo (mais evidência a favor daquela categoria) e as
-    `top_n` com maior coeficiente negativo (mais evidência contra).
-
-    `modelo_logistico.coef_` tem shape (n_classes, n_features) quando o
-    problema é multiclasse (uma linha de coeficientes por classe, no
-    esquema one-vs-rest interno do sklearn para 'lbfgs'/'saga'). Cada
-    coeficiente representa o peso daquela palavra (feature do TF-IDF) na
-    decisão daquela classe especificamente, não é uma relação causal,
-    é a direção e a força com que a presença da palavra desloca o
-    log-odds da classe.
-    """
     vocabulario = np.array(vectorizer.get_feature_names_out())
     resultado = {}
 
@@ -148,17 +92,7 @@ def top_features_por_classe(modelo_logistico, vectorizer, classes, top_n=15):
 
 
 def cobertura_por_confianca(y_true, y_pred, probas, thresholds=(0.5, 0.7, 0.8, 0.9, 0.95, 0.99)):
-    """Métrica de negócio: para cada threshold de confiança, calcula que
-    fração do catálogo poderia ser autoclassificada (previsão com
-    probabilidade máxima acima do threshold) e qual seria a accuracy
-    dessa fração, versus o que sobraria para revisão manual.
 
-    Isso conecta a métrica de ML (probabilidade prevista) a uma decisão
-    operacional concreta: "acima de X% de confiança, aceita a previsão
-    automática; abaixo disso, manda para revisão humana". O modelo já
-    calcula `probas` como parte da predição, esta função só organiza
-    essa informação em termos de negócio.
-    """
     probas_max = np.asarray(probas).max(axis=1)
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
@@ -185,15 +119,7 @@ def cobertura_por_confianca(y_true, y_pred, probas, thresholds=(0.5, 0.7, 0.8, 0
 
 
 def pr_auc_macro(y_true, y_proba, classes):
-    """PR-AUC (average precision) por classe, com a média macro.
 
-    Complementa o ROC-AUC: em um problema com boa separação entre classes
-    como este, o ROC-AUC tende a saturar perto de 1 e comunica pouco além
-    do F1 já reportado. PR-AUC foca no comportamento da classe positiva e
-    tende a ser mais sensível a desbalanceamento residual entre
-    categorias, é a métrica que o próprio material teórico do
-    treinamento recomenda observar "especialmente em classes raras".
-    """
     y_true = np.asarray(y_true)
     resultado = {}
     for i, classe in enumerate(classes):
