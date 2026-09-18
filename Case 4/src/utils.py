@@ -18,7 +18,6 @@ PALETTE = {
     "ml_ridge": "#1D4E89",
     "ml_random_forest": "#118AB2",
     "ml_gradient_boosting": "#C9A227",
-    "ml_xgboost": "#D4145A",
     "prophet": "#E63946",
     "real": "#111111",
     "treino": "#2E5FA3",

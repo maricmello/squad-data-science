@@ -3,21 +3,21 @@
 Previsão do `Close` de uma ação para 1, 2 e 3 dias úteis à frente, nas mesmas 17
 origens de validação walk-forward. Os modelos ficam em três grupos: baselines
 simples (Naïve, Seasonal Naïve, SES, Holt e Holt-Winters), modelos clássicos
-(ARIMA e SARIMA) e Machine Learning (Ridge, Random Forest, Gradient Boosting e
-XGBoost), com o Prophet testado à parte.
+(ARIMA e SARIMA) e Machine Learning (Ridge, Random Forest e Gradient Boosting),
+com o Prophet testado à parte.
 
 ## Requirements
 
 ```
-pip install pandas numpy matplotlib statsmodels scikit-learn xgboost prophet nbformat nbclient ipykernel
+pip install pandas numpy matplotlib statsmodels scikit-learn prophet nbformat nbclient ipykernel
 ```
 
 ## Principais resultados
 
-A tabela final tem doze modelos: os cinco baselines, os dois clássicos, os quatro
+A tabela final tem onze modelos: os cinco baselines, os dois clássicos, os três
 candidatos de Machine Learning e o Prophet. Só o Ridge passou na validação interna
-do notebook 03, mas os outros três candidatos (Random Forest, Gradient Boosting e
-XGBoost) também foram retreinados com todo o histórico e avaliados nas mesmas 17
+do notebook 03, mas os outros dois candidatos (Random Forest e Gradient Boosting)
+também foram retreinados com todo o histórico e avaliados nas mesmas 17
 origens walk-forward, para efeito de comparação. MAPE e RMSE médios entre os três
 horizontes:
 
@@ -34,8 +34,7 @@ horizontes:
 <tr><td rowspan="2">Modelos clássicos</td><td>ARIMA</td><td>5,22%</td><td>1,18</td></tr>
 <tr><td>SARIMA</td><td>5,22%</td><td>1,18</td></tr>
 <tr><td>Modelos lineares</td><td>Ridge</td><td>6,58%</td><td>1,32</td></tr>
-<tr><td rowspan="3">Modelos de árvores</td><td>Random Forest</td><td>7,24%</td><td>1,61</td></tr>
-<tr><td>XGBoost</td><td>9,40%</td><td>1,83</td></tr>
+<tr><td rowspan="2">Modelos de árvores</td><td>Random Forest</td><td>7,24%</td><td>1,61</td></tr>
 <tr><td>Gradient Boosting</td><td>10,14%</td><td>2,00</td></tr>
 <tr><td>Modelo aditivo</td><td>Prophet</td><td>37,33%</td><td>5,96</td></tr>
 </tbody>
@@ -55,6 +54,6 @@ chegam a 0,99 de correlação entre si, porque a série não é estacionária, e
 a maior parte dessas variáveis repete a mesma informação do último preço, sem
 sinal novo.
 
-Random Forest, Gradient Boosting e XGBoost ficam todos atrás do Ridge nos três horizontes, 
-com o Gradient Boosting no fim da fila (10,14% de MAPE médio). Nenhum dos quatro chega perto 
+Random Forest e Gradient Boosting ficam atrás do Ridge nos três horizontes, 
+com o Gradient Boosting no fim da fila (10,14% de MAPE médio). Nenhum dos três chega perto 
 do Holt.
